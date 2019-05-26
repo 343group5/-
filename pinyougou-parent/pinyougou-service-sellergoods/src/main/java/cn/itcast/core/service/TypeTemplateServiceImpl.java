@@ -2,6 +2,7 @@ package cn.itcast.core.service;
 
 import cn.itcast.core.dao.specification.SpecificationOptionDao;
 import cn.itcast.core.dao.template.TypeTemplateDao;
+import cn.itcast.core.pojo.good.Goods;
 import cn.itcast.core.pojo.specification.SpecificationOption;
 import cn.itcast.core.pojo.specification.SpecificationOptionQuery;
 import cn.itcast.core.pojo.template.TypeTemplate;
@@ -13,8 +14,14 @@ import com.github.pagehelper.PageHelper;
 import entity.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +38,13 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
     private SpecificationOptionDao specificationOptionDao;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private JmsTemplate jmsTemplate;
+    @Autowired
+    private Destination topicPageAndSolrDestination;
+    @Autowired
+    private Destination queueSolrDeleteDestination;
+
 
     @Override
     public PageResult search(Integer page, Integer rows, TypeTemplate tt) {
@@ -118,4 +132,33 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
         put(options,List)*/
         return listMap;
     }
+
+
+    //开始审核
+    @Override
+    public void updateStatus(Long[] ids, String status) {
+        TypeTemplate typeTemplate=new TypeTemplate();
+        typeTemplate.setAuditStatus(status);
+        for (Long id : ids) {
+            typeTemplate.setId(id);
+            //1:更改商品状态
+            typeTemplateDao.updateByPrimaryKeySelective(typeTemplate);
+            //只有在审核通过的时候才会执行下面处理
+            if("1".equals(status)){
+
+                //发消息
+                jmsTemplate.send(topicPageAndSolrDestination, new MessageCreator() {
+                    @Override
+                    public Message createMessage(Session session) throws JMSException {
+                        return session.createTextMessage(String.valueOf(id));
+                    }
+                });
+
+            }
+
+        }
+
+    }
+
+
 }

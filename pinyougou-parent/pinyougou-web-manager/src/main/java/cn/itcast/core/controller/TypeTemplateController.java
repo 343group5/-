@@ -58,4 +58,17 @@ public class TypeTemplateController {
         return typeTemplateService.findOne(id);
     }
 
+    //更新状态   审核通过  或驳回
+    @RequestMapping(value = "/updateStatus.do")
+    public Result updateStatus(Long[] ids,String status){
+        try {
+            typeTemplateService.updateStatus(ids, status);
+            return new Result(true,"成功");
+        } catch (Exception e) {
+            // TODO: handle exception
+            return new Result(true,"失败");
+        }
+    }
+
+
 }

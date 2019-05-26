@@ -113,4 +113,41 @@ app.controller('typeTemplateController' ,function($scope,$controller,brandServic
 	$scope.deleteTableRow = function(index){
 		$scope.entity.customAttributeItems.splice(index,1);
 	}
+
+    // 显示分类:
+    $scope.findItemCatList = function(){
+
+        itemCatService.findAll().success(function(response){
+            for(var i=0;i<response.length;i++){
+                $scope.itemCatList[response[i].id] = response[i].name;
+            }
+        });
+    }
+
+	// 显示状态
+    $scope.status = ["未审核","审核通过","审核未通过","关闭"];
+    $scope.itemCatList=[];//模板分类列表
+    //查询模板分类
+    $scope.findItemCatList=function(){
+
+        typeTemplateService.findAll().success(
+            function(response){
+                for(var i=0;i<response.length;i++){
+                    $scope.typeTemplateService[response[i].id ]=response[i].name;
+                }
+            }
+        );
+    }
+    // 审核的方法:
+    $scope.updateStatus = function(status){
+        typeTemplateService.updateStatus($scope.selectIds,status).success(function(response){
+            if(response.flag){
+                $scope.reloadList();//刷新列表
+                $scope.selectIds = [];
+            }else{
+                alert(response.message);
+            }
+        });
+    }
+
 });	

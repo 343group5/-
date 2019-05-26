@@ -21,6 +21,12 @@ public class TypeTemplate implements Serializable {
     private String brandIds;
 
     /**
+     * 审核状态
+     */
+    private String auditStatus;
+
+
+    /**
      * 自定义属性
      */
     private String customAttributeItems;
@@ -67,6 +73,14 @@ public class TypeTemplate implements Serializable {
         this.customAttributeItems = customAttributeItems == null ? null : customAttributeItems.trim();
     }
 
+    public String getAuditStatus() {
+        return auditStatus;
+    }
+
+    public void setAuditStatus(String auditStatus) {
+        this.auditStatus = auditStatus;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -77,6 +91,7 @@ public class TypeTemplate implements Serializable {
         sb.append(", name=").append(name);
         sb.append(", specIds=").append(specIds);
         sb.append(", brandIds=").append(brandIds);
+        sb.append(", brandIds=").append(auditStatus);
         sb.append(", customAttributeItems=").append(customAttributeItems);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
@@ -99,6 +114,7 @@ public class TypeTemplate implements Serializable {
             && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
             && (this.getSpecIds() == null ? other.getSpecIds() == null : this.getSpecIds().equals(other.getSpecIds()))
             && (this.getBrandIds() == null ? other.getBrandIds() == null : this.getBrandIds().equals(other.getBrandIds()))
+            && (this.getAuditStatus() == null ? other.getAuditStatus() == null : this.getAuditStatus().equals(other.getAuditStatus()))
             && (this.getCustomAttributeItems() == null ? other.getCustomAttributeItems() == null : this.getCustomAttributeItems().equals(other.getCustomAttributeItems()));
     }
 
@@ -110,6 +126,7 @@ public class TypeTemplate implements Serializable {
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         result = prime * result + ((getSpecIds() == null) ? 0 : getSpecIds().hashCode());
         result = prime * result + ((getBrandIds() == null) ? 0 : getBrandIds().hashCode());
+        result = prime * result + ((getAuditStatus() == null) ? 0 : getAuditStatus().hashCode());
         result = prime * result + ((getCustomAttributeItems() == null) ? 0 : getCustomAttributeItems().hashCode());
         return result;
     }
