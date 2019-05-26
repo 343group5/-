@@ -23,6 +23,9 @@ import java.util.Map;
 @Transactional
 public class BrandServiceImpl implements BrandService {
 
+    /**
+     * 注入
+     */
     @Autowired
     private BrandDao brandDao;
 
